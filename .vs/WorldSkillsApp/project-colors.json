@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "d3dba52b-5e77-430f-b734-ee579f8ad0ab": {
+      "ProjectGuid": "d3dba52b-5e77-430f-b734-ee579f8ad0ab",
+      "DisplayName": "WorldSkillsApp",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -1,0 +1,48 @@
+﻿<Window x:Class="WorldSkillsApp.AdminPanel"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="AMONIC Airlines Automation System" Height="650" Width="800"
+        x:Name="AdminPanelWindow"
+        Loaded="AdminPanelWindow_Loaded">
+    <Grid>
+        <StackPanel>
+            <Border BorderThickness="0 0 0 1" BorderBrush="Black">
+                <StackPanel Orientation="Horizontal">
+                    <Button BorderThickness="0" FontSize="14" Grid.Row="0" Background="White"
+                            BorderBrush="White" Margin="10" Padding="10 5 10 5" Cursor="Hand">Add user</Button>
+                    <Button BorderThickness="0" FontSize="14" Background="White" 
+                            BorderBrush="White" Cursor="Hand" Height="27" Padding="10 5 10 5"  Content="Exit" Click="Button_Click"/>
+                </StackPanel>
+            </Border>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Office:" FontSize="18" Grid.Row="1" Margin="10"/>
+                <ComboBox FontSize="18" Height="30" Width="150" SelectionChanged="ComboBox_Selected">
+                    <ComboBoxItem IsSelected="True" Content="All officces"/>
+                    <ComboBoxItem Content="Cairo"/>
+                    <ComboBoxItem Content="Bahrain"/>
+                    <ComboBoxItem Content="Doha"/>
+                    <ComboBoxItem Content="Riyadh"/>
+                </ComboBox>
+            </StackPanel>
+            <DataGrid x:Name="OfficesData" AutoGenerateColumns="False" FontSize="16" 
+                      Width="750" CanUserAddRows="False" HeadersVisibility="Column" LoadingRow="gridProducts_LoadingRow"
+                      SelectedItem="{Binding Path=Button_Click_1, Mode=TwoWay}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Width="100" Binding="{Binding Path=FirstName}"/>
+                    <DataGridTextColumn Header="Last Name" Width="150" Binding="{Binding Path=LastName}"/>
+                    <DataGridTextColumn Header="Age" Width="60" Binding="{Binding Path=Age}"/>
+                    <DataGridTextColumn Header="User Role" Width="80" Binding="{Binding Path=Role}"/>
+                    <DataGridTextColumn Header="Email Address" Width="250" Binding="{Binding Path=EmailAddress}"/>
+                    <DataGridTextColumn Header="Office" Width="*" Binding="{Binding Path=Offices}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel Orientation="Horizontal" Margin="20 10 0 0">
+                <Button Content="Change Role" Margin="0 0 50 0" FontSize="14" Padding="5"/>
+                <Button Content="Enable/Disable Login" FontSize="14" Padding="5"  Click="Button_Click_1"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
