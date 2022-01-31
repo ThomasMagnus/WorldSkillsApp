@@ -1,25 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Data;
-using System.Data.SqlClient;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using System.Collections.ObjectModel;
 
 namespace WorldSkillsApp
 {
-    /// <summary>
-    /// Логика взаимодействия для AdminPanel.xaml
-    /// </summary>
     public partial class AdminPanel : Window
     {
 
@@ -29,16 +15,28 @@ namespace WorldSkillsApp
             InitializeComponent();
         }
 
-        private void AdminPanelWindow_Loaded(object sender, RoutedEventArgs e)
+        List<DataTable> dataTables;
+        DataTable newDataTable;
+
+        private void refreshDataGrid()
         {
-            string selectUsers = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
-                                    FROM Users
-                                    JOIN Roles ON Users.RoleID = Roles.ID
-                                    JOIN Offices ON Users.OfficeID = Offices.ID";
+
+            OfficesData.ItemsSource = null;
+            OfficesData.ItemsSource = dataTables;
+
+        }
+
+        private void ShowAddUser(object sender, RoutedEventArgs e)
+        {
+            AddUser addUserPanel = new AddUser();
+            addUserPanel.Show();
+        }
+
+        private void getClassData(string selectUsers) {
 
             var reader = sqlConnector.Queryes(selectUsers);
 
-            List<DataTable> dataTables = new List<DataTable>();
+            dataTables = new List<DataTable>();
 
             int nowYear = DateTime.Now.Year;
 
@@ -47,7 +45,7 @@ namespace WorldSkillsApp
                 try
                 {
                     int age = nowYear - DateTime.Parse(reader["Birthdate"].ToString()).Year;
-                    DataTable newDataTable = new DataTable
+                    newDataTable = new DataTable
                     {
                         FirstName = reader["FirstName"],
                         LastName = reader["LastName"],
@@ -59,13 +57,29 @@ namespace WorldSkillsApp
                     };
 
                     dataTables.Add(newDataTable);
-                    
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
             }
+
+            sqlConnector.sqlConnection.Close();
+        }
+
+        private void AdminPanelWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            string selectUsers = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
+                                    FROM Users
+                                    JOIN Roles ON Users.RoleID = Roles.ID
+                                    JOIN Offices ON Users.OfficeID = Offices.ID";
+
+
+            dataTables = new List<DataTable>();
+
+            getClassData(selectUsers);
+
             OfficesData.ItemsSource = dataTables;
         }
 
@@ -110,34 +124,62 @@ namespace WorldSkillsApp
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            DataTable dataTable = (DataTable)OfficesData.SelectedItem;
-            string email = dataTable.EmailAddress.ToString();
-            string firstName = dataTable.FirstName.ToString();
-            string lastName = dataTable.LastName.ToString();
+
+            DataTable dataTable = detectUser();
+
+            ChangeQueries commandNonActive = new ChangeQueries("Active=0", dataTable.EmailAddress.ToString(),
+                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
+            ChangeQueries commandIsActive = new ChangeQueries("Active=1", dataTable.EmailAddress.ToString(),
+                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
 
             bool active = (bool)dataTable.Active;
-            string commandNonActive = $"UPDATE Users SET Active=0 WHERE Email='{email}' AND FirstName='{firstName}' AND LastName='{lastName}'";
-            string commandIsActive = $"UPDATE Users SET Active=1 WHERE Email='{email}' AND FirstName='{firstName}' AND LastName='{lastName}'";
-
-            void changeActive(string query, Color color)
-            {
-                string command = query;
-                sqlConnector.getQuery(command);
-                int cell = OfficesData.SelectedIndex;
-
-                DataGridRow row = (DataGridRow)OfficesData.ItemContainerGenerator.ContainerFromIndex(cell);
-                row.Background = getColor(color);
-            }
 
             if (active)
             {
-                changeActive(commandNonActive, Colors.Red);
+                changeUserRow(commandNonActive.command, Colors.Red);
+                dataTable.Active = false;
             }
             else
             {
-                changeActive(commandIsActive, Colors.White);
+                changeUserRow(commandIsActive.command, Colors.White);
+                dataTable.Active = true;
             }
         }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            DataTable dataTable = detectUser();
+            ChangeQueries commandIsAdmin = new ChangeQueries("RoleID=1", dataTable.EmailAddress.ToString(),
+                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
+            ChangeQueries commandNonAdmin = new ChangeQueries("RoleID=2", dataTable.EmailAddress.ToString(),
+                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
+
+            string role = dataTable.Role.ToString();
+
+            if (role == "Administrator")
+            {
+                changeUserRow(commandNonAdmin.command, Colors.White);
+                dataTable.Role = "User";
+            } else if (role == "User")
+            {
+                changeUserRow(commandIsAdmin.command, Colors.Lime);
+                dataTable.Role = "Administrator";
+            }
+
+            refreshDataGrid();
+        }
+
+        private void changeUserRow(string query, Color color)
+        {
+
+            string command = query;
+            sqlConnector.getQuery(command);
+            int cell = OfficesData.SelectedIndex;
+
+            DataGridRow row = (DataGridRow)OfficesData.ItemContainerGenerator.ContainerFromIndex(cell);
+            row.Background = getColor(color);
+        }
+
 
         private void ComboBox_Selected(object sender, RoutedEventArgs e)
         {
@@ -145,10 +187,46 @@ namespace WorldSkillsApp
             ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
             if (selectedItem.Content != null)
             {
-                MessageBox.Show(selectedItem.Content.ToString());
+                string officeTitle = selectedItem.Content.ToString();
+                string sqlCommand1 = String.Format(@"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
+                                    FROM Users
+                                    JOIN Roles ON Users.RoleID = Roles.ID
+                                    JOIN Offices ON Users.OfficeID = Offices.ID
+                                    WHERE Offices.Title = '{0}'", officeTitle);
+
+                string sqlCommand2 = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
+                                    FROM Users
+                                    JOIN Roles ON Users.RoleID = Roles.ID
+                                    JOIN Offices ON Users.OfficeID = Offices.ID";
+
+                if (officeTitle == "All officces") getClassData(sqlCommand2);
+                else getClassData(sqlCommand1);
+
+                refreshDataGrid();
             }
         }
 
+        private DataTable detectUser()
+        {
+            DataTable dataTable = (DataTable)OfficesData.SelectedItem;
 
+            return dataTable;
+        }
+
+        private struct ChangeQueries
+        {
+            public string query, email, firstName, lastName, command;
+
+            public ChangeQueries(string query, string email, string firstName, string lastName)
+            {
+                this.query = query;
+                this.email = email;
+                this.firstName = firstName;
+                this.lastName = lastName;
+
+                command = $"UPDATE Users SET {query} WHERE Email='{email}'" +
+                    $" AND FirstName='{firstName}' AND LastName='{lastName}'";
+            }
+        }
     }
 }

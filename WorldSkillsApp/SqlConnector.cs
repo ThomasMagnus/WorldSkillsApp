@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,9 +9,9 @@ namespace WorldSkillsApp
     {
         
         private static string connectionString = "Server=LAPTOP-TNCLBUIO;Database=Session1_01;Trusted_Connection=True;";
-        static SqlConnection sqlConnection = new SqlConnection(connectionString);
+        public SqlConnection sqlConnection = new SqlConnection(connectionString);
 
-        private static void OpenConnect()
+        private void OpenConnect()
         {
             try
             {
@@ -96,7 +92,6 @@ namespace WorldSkillsApp
             {
                 return null;
             }
-            
         }
     }
 }

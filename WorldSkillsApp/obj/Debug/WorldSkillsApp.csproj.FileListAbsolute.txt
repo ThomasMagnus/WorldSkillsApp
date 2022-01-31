@@ -25,3 +25,5 @@ C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\WorldSkillsA
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\WorldSkillsApp.csproj.CopyComplete
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AdminPanel.g.cs
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AdminPanel.baml
+C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AddUser.g.cs
+C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AddUser.baml
