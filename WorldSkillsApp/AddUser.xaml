@@ -32,7 +32,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Center" Margin="40,0,40,0">
             <Label Content="Office"/>
-            <ComboBox FontSize="12" Height="20" Width="100" Margin="42 0 0 0">
+            <ComboBox Name="office" FontSize="12" Height="20" Width="100" Margin="42 0 0 0">
                 <ComboBoxItem IsSelected="True" Content="All officces"/>
                 <ComboBoxItem Content="Cairo"/>
                 <ComboBoxItem Content="Bahrain"/>
@@ -42,7 +42,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="4" VerticalAlignment="Center" Margin="40,0,40,0">
             <Label Content="BirthDate" Target="{Binding ElementName=BirthDate}"/>
-            <TextBox Name="BirthDate" Width="200" Height="20" Margin="23 0 0 0" Text="[dd/mm/yy]"/>
+            <TextBox Name="birthDate" Width="200" Height="20" Margin="23 0 0 0" Text="[dd/mm/yy]"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="5" VerticalAlignment="Center" Margin="40,0,40,0">
             <Label Content="Password" Target="{Binding ElementName=password}"/>
