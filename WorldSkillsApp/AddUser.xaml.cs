@@ -29,10 +29,24 @@ namespace WorldSkillsApp
             AddUserPanel.Close();
         }
 
+        private void ClearInputs()
+        {
+            foreach (UIElement elem in MainGrid.Children)
+            {
+                
+            }
+        }
+
         private void AddUserOnData(object sender, RoutedEventArgs e)
         {
             Dictionary<string, int> officesObj = new Dictionary<string, int> { };
 
+            GetOfficesDict(officesObj);
+            CreateUser(officesObj);
+        }
+
+        private void GetOfficesDict(Dictionary<string, int> officesObj)
+        {
             try
             {
                 string detectCountryIdCommand = "SELECT * FROM Offices";
@@ -43,7 +57,8 @@ namespace WorldSkillsApp
                 {
                     officesObj[reader["Title"].ToString()] = Int32.Parse(reader["ID"].ToString());
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -51,20 +66,36 @@ namespace WorldSkillsApp
             {
                 sqlConnector.sqlConnection.Close();
             }
+        }
 
+        private void CreateUser(Dictionary<string, int> officesObj)
+        {
             try
             {
                 string showAllUsers = "SELECT max(ID) FROM Users";
                 var reader = sqlConnector.Queryes(showAllUsers);
                 int userId = 0;
-                PasswordBox password = new PasswordBox();
+                PasswordBox password = Password;
 
                 while (reader.Read()) userId = (int)reader[""];
+                sqlConnector.sqlConnection.Close();
 
-                string addUserCommand = $@"INSERT INTO Users VALUES ({userId++}, 2, '{email.Text}', {password.Password}, 
-                                            '{firstName.Text}', '{lastName.Text}', {officesObj[office.Text]}, '{birthDate.Text}', 1)";
+                var res = sqlConnector.Queryes($"SELECT * FROM Users WHERE Email='{email.Text}'");
 
-                sqlConnector.getQuery(addUserCommand);
+                if (res.HasRows)
+                {
+                    MessageBox.Show("Пользователь с таким email уже в системе!", "Ошибка");
+                }
+                else
+                {
+                    string addUserCommand = $@"INSERT INTO Users VALUES ({++userId}, 2, '{email.Text}', '{password.Password}', 
+                                           '{firstName.Text}', '{lastName.Text}', {officesObj[office.Text]}, '{birthDate.Text}', 1)";
+
+                    sqlConnector.getQuery(addUserCommand);
+
+                    MessageBox.Show("Пользователь добавлен!");
+                    ClearInputs();
+                }
             }
             catch (Exception ex)
             {
