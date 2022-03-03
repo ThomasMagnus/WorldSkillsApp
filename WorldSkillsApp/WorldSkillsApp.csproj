@@ -87,6 +87,9 @@
     <Compile Include="AdminPanel.xaml.cs">
       <DependentUpon>AdminPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ChangeRole.xaml.cs">
+      <DependentUpon>ChangeRole.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Countries.cs">
       <DependentUpon>User.tt</DependentUpon>
     </Compile>
@@ -120,11 +123,16 @@
     <Compile Include="Users.cs">
       <DependentUpon>User.tt</DependentUpon>
     </Compile>
+    <Compile Include="UsersData.cs" />
     <Page Include="AddUser.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AdminPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChangeRole.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

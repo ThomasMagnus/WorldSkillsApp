@@ -10,20 +10,23 @@ namespace WorldSkillsApp
     {
 
         SqlConnector sqlConnector = new SqlConnector();
+
+        public string selectUsers = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
+                                    FROM Users
+                                    JOIN Roles ON Users.RoleID = Roles.ID
+                                    JOIN Offices ON Users.OfficeID = Offices.ID";
+
         public AdminPanel()
         {
             InitializeComponent();
         }
 
-        List<DataTable> dataTables;
         DataTable newDataTable;
 
         private void refreshDataGrid()
         {
-
             OfficesData.ItemsSource = null;
-            OfficesData.ItemsSource = dataTables;
-
+            OfficesData.ItemsSource = UserData.dataTables;
         }
 
         private void ShowAddUser(object sender, RoutedEventArgs e)
@@ -32,11 +35,10 @@ namespace WorldSkillsApp
             addUserPanel.Show();
         }
 
-        private void getClassData(string selectUsers) {
+        public void getClassData(string selectUsers)
+        {
 
             var reader = sqlConnector.Queryes(selectUsers);
-
-            dataTables = new List<DataTable>();
 
             int nowYear = DateTime.Now.Year;
 
@@ -56,7 +58,7 @@ namespace WorldSkillsApp
                         Active = reader["Active"]
                     };
 
-                    dataTables.Add(newDataTable);
+                    UserData.dataTables.Add(newDataTable);
 
                 }
                 catch (Exception ex)
@@ -68,19 +70,34 @@ namespace WorldSkillsApp
             sqlConnector.sqlConnection.Close();
         }
 
+        public void GetOfficesDict(Dictionary<string, int> officesObj)
+        {
+            try
+            {
+                string detectCountryIdCommand = "SELECT * FROM Offices";
+                var reader = sqlConnector.Queryes(detectCountryIdCommand);
+
+
+                while (reader.Read())
+                {
+                    officesObj[reader["Title"].ToString()] = Int32.Parse(reader["ID"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                sqlConnector.sqlConnection.Close();
+            }
+        }
+
         private void AdminPanelWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            string selectUsers = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
-                                    FROM Users
-                                    JOIN Roles ON Users.RoleID = Roles.ID
-                                    JOIN Offices ON Users.OfficeID = Offices.ID";
-
-
-            dataTables = new List<DataTable>();
-
             getClassData(selectUsers);
-
-            OfficesData.ItemsSource = dataTables;
+            OfficesData.ItemsSource = UserData.dataTables;
+            GetOfficesDict(UserData.officesObj);
         }
 
         private void gridProducts_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -92,7 +109,7 @@ namespace WorldSkillsApp
                 if (dataTable.Role.ToString() == "Administrator") e.Row.Background = getColor(Colors.Lime);
                 if (dataTable.Active.ToString() == "False") e.Row.Background = getColor(Colors.Red);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
             }
@@ -103,18 +120,6 @@ namespace WorldSkillsApp
         {
             SolidColorBrush col = new SolidColorBrush(color);
             return col;
-        }
-
-        public class DataTable
-        {
-            public object ID { get; set; }
-            public object FirstName { get; set; }
-            public object LastName { get; set; }
-            public object Age { get; set; }
-            public object Role { get; set; }
-            public object EmailAddress { get; set; }
-            public object Offices { get; set; }
-            public object Active { get; set; }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -148,25 +153,24 @@ namespace WorldSkillsApp
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            DataTable dataTable = detectUser();
-            ChangeQueries commandIsAdmin = new ChangeQueries("RoleID=1", dataTable.EmailAddress.ToString(),
-                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
-            ChangeQueries commandNonAdmin = new ChangeQueries("RoleID=2", dataTable.EmailAddress.ToString(),
-                dataTable.FirstName.ToString(), dataTable.LastName.ToString());
 
-            string role = dataTable.Role.ToString();
+            try
+            {
+                ChangeRole changeRole = new ChangeRole();
+                DataTable dataTable = detectUser();
+                if (dataTable == null)
+                {
+                    MessageBox.Show("Пользователь не выбран!");
+                    return;
+                }
+                UserData.email = dataTable.EmailAddress.ToString();
 
-            if (role == "Administrator")
-            {
-                changeUserRow(commandNonAdmin.command, Colors.White);
-                dataTable.Role = "User";
-            } else if (role == "User")
-            {
-                changeUserRow(commandIsAdmin.command, Colors.Lime);
-                dataTable.Role = "Administrator";
+                changeRole.Show();
             }
-
-            refreshDataGrid();
+            catch
+            {
+                MessageBox.Show("Пользователь не выбран!");
+            }
         }
 
         private void changeUserRow(string query, Color color)
@@ -185,6 +189,7 @@ namespace WorldSkillsApp
         {
             ComboBox comboBox = (ComboBox)sender;
             ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
+
             if (selectedItem.Content != null)
             {
                 string officeTitle = selectedItem.Content.ToString();
@@ -194,20 +199,17 @@ namespace WorldSkillsApp
                                     JOIN Offices ON Users.OfficeID = Offices.ID
                                     WHERE Offices.Title = '{0}'", officeTitle);
 
-                string sqlCommand2 = @"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
-                                    FROM Users
-                                    JOIN Roles ON Users.RoleID = Roles.ID
-                                    JOIN Offices ON Users.OfficeID = Offices.ID";
-
-                if (officeTitle == "All officces") getClassData(sqlCommand2);
+                UserData.dataTables.Clear();
+                if (officeTitle == "All officces") getClassData(selectUsers);
                 else getClassData(sqlCommand1);
 
                 refreshDataGrid();
             }
         }
 
-        private DataTable detectUser()
+        public DataTable detectUser()
         {
+
             DataTable dataTable = (DataTable)OfficesData.SelectedItem;
 
             return dataTable;

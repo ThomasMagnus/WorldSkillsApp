@@ -21,6 +21,7 @@
                 <TextBlock Text="Office:" FontSize="18" Margin="10"/>
                 <ComboBox FontSize="18" Height="30" Width="150" SelectionChanged="ComboBox_Selected">
                     <ComboBoxItem IsSelected="True" Content="All officces"/>
+                    <ComboBoxItem Content="Abu dhabi"/>
                     <ComboBoxItem Content="Cairo"/>
                     <ComboBoxItem Content="Bahrain"/>
                     <ComboBoxItem Content="Doha"/>
@@ -29,7 +30,7 @@
             </StackPanel>
             <DataGrid x:Name="OfficesData" AutoGenerateColumns="False" FontSize="16" 
                       Width="750" CanUserAddRows="False" HeadersVisibility="Column" LoadingRow="gridProducts_LoadingRow"
-                      SelectedItem="{Binding Path=Button_Click_1, Mode=TwoWay}">
+                      SelectedItem="{Binding Path=Button_Click_1, Mode=TwoWay}" ItemsSource="{Binding dataTables}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Width="100" Binding="{Binding Path=FirstName}"/>
                     <DataGridTextColumn Header="Last Name" Width="150" Binding="{Binding Path=LastName}"/>

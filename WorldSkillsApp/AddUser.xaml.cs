@@ -12,16 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Collections;
+using System.Data;
 
 namespace WorldSkillsApp
 {
     public partial class AddUser : Window
     {
+        AdminPanel adminPanel = new AdminPanel();
         SqlConnector sqlConnector = new SqlConnector();
+        DataTable user;
 
         public AddUser()
         {
             InitializeComponent();
+            user = new DataTable();
+            this.DataContext = user;
         }
 
         private void CloseAddPanel(object sender, RoutedEventArgs e)
@@ -31,45 +36,25 @@ namespace WorldSkillsApp
 
         private void ClearInputs()
         {
-            foreach (UIElement elem in MainGrid.Children)
-            {
-                
-            }
+
+            email.Text = "";
+            firstName.Text = "";
+            lastName.Text = "";
+            birthDate.Text = "[dd/mm/yy]";
+            Password.Password = "";
+
+            UserData.dataTables.Clear();
+            adminPanel.getClassData(adminPanel.selectUsers);
         }
 
         private void AddUserOnData(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, int> officesObj = new Dictionary<string, int> { };
-
-            GetOfficesDict(officesObj);
-            CreateUser(officesObj);
-        }
-
-        private void GetOfficesDict(Dictionary<string, int> officesObj)
-        {
-            try
-            {
-                string detectCountryIdCommand = "SELECT * FROM Offices";
-                var reader = sqlConnector.Queryes(detectCountryIdCommand);
-
-
-                while (reader.Read())
-                {
-                    officesObj[reader["Title"].ToString()] = Int32.Parse(reader["ID"].ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            finally
-            {
-                sqlConnector.sqlConnection.Close();
-            }
+            CreateUser(UserData.officesObj);
         }
 
         private void CreateUser(Dictionary<string, int> officesObj)
         {
+
             try
             {
                 string showAllUsers = "SELECT max(ID) FROM Users";
@@ -79,6 +64,7 @@ namespace WorldSkillsApp
 
                 while (reader.Read()) userId = (int)reader[""];
                 sqlConnector.sqlConnection.Close();
+
 
                 var res = sqlConnector.Queryes($"SELECT * FROM Users WHERE Email='{email.Text}'");
 
@@ -92,7 +78,6 @@ namespace WorldSkillsApp
                                            '{firstName.Text}', '{lastName.Text}', {officesObj[office.Text]}, '{birthDate.Text}', 1)";
 
                     sqlConnector.getQuery(addUserCommand);
-
                     MessageBox.Show("Пользователь добавлен!");
                     ClearInputs();
                 }
@@ -106,5 +91,11 @@ namespace WorldSkillsApp
                 sqlConnector.sqlConnection.Close();
             }
         }
+
+        private void Load_AddUserPanel(object sender, RoutedEventArgs e)
+        {
+            adminPanel.OfficesData.ItemsSource = UserData.dataTables;
+        }
+
     }
 }
