@@ -59,6 +59,13 @@ namespace WorldSkillsApp
                             mainWindow.Close();
                             break;
                         }
+                        else if (userPass.Password == pass.ToString() && role.ToString() == "2")
+                        {
+                            sqlConnection.Close();
+                            UserWindow userWindow = new UserWindow();
+                            userWindow.Show();
+                            mainWindow.Close();
+                        }
                         else
                         {
                             MessageBox.Show("Faild");

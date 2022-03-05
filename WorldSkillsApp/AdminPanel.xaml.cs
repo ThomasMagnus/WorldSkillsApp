@@ -153,29 +153,22 @@ namespace WorldSkillsApp
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            ChangeRole changeRole = new ChangeRole();
+            DataTable dataTable = detectUser();
 
-            try
-            {
-                ChangeRole changeRole = new ChangeRole();
-                DataTable dataTable = detectUser();
-                if (dataTable == null)
-                {
-                    MessageBox.Show("Пользователь не выбран!");
-                    return;
-                }
-                UserData.email = dataTable.EmailAddress.ToString();
-
-                changeRole.Show();
-            }
-            catch
+            if (dataTable == null)
             {
                 MessageBox.Show("Пользователь не выбран!");
+                return;
             }
+
+            UserData.email = dataTable.EmailAddress.ToString();
+
+            changeRole.Show();
         }
 
         private void changeUserRow(string query, Color color)
         {
-
             string command = query;
             sqlConnector.getQuery(command);
             int cell = OfficesData.SelectedIndex;
@@ -193,11 +186,12 @@ namespace WorldSkillsApp
             if (selectedItem.Content != null)
             {
                 string officeTitle = selectedItem.Content.ToString();
-                string sqlCommand1 = String.Format(@"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, Users.Email, Offices.Title as Office, Users.Active
-                                    FROM Users
-                                    JOIN Roles ON Users.RoleID = Roles.ID
-                                    JOIN Offices ON Users.OfficeID = Offices.ID
-                                    WHERE Offices.Title = '{0}'", officeTitle);
+                string sqlCommand1 = String.Format(@"SELECT Users.FirstName, Users.LastName, Users.Birthdate, Roles.Title, 
+                                                        Users.Email, Offices.Title as Office, Users.Active
+                                                    FROM Users
+                                                    JOIN Roles ON Users.RoleID = Roles.ID
+                                                    JOIN Offices ON Users.OfficeID = Offices.ID
+                                                    WHERE Offices.Title = '{0}'", officeTitle);
 
                 UserData.dataTables.Clear();
                 if (officeTitle == "All officces") getClassData(selectUsers);

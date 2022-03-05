@@ -29,3 +29,5 @@ C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AddUser.g.cs
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\AddUser.baml
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\ChangeRole.g.cs
 C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\ChangeRole.baml
+C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\UserWindow.g.cs
+C:\Users\emmag\source\repos\WorldSkillsApp\WorldSkillsApp\obj\Debug\UserWindow.baml
