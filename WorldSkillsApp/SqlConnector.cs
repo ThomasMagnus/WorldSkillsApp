@@ -50,6 +50,9 @@ namespace WorldSkillsApp
                     {
                         object pass = reader["Password"];
                         object role = reader["RoleID"];
+                        DataCrashes.UserId = reader["ID"];
+                        DataCrashes.UserEmail = reader["Email"];
+                        DataCrashes.FirstName = reader["FirstName"];
 
                         if (userPass.Password == pass.ToString() && role.ToString() == "1")
                         {
@@ -65,6 +68,7 @@ namespace WorldSkillsApp
                             UserWindow userWindow = new UserWindow();
                             userWindow.Show();
                             mainWindow.Close();
+                            break;
                         }
                         else
                         {

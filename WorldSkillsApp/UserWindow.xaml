@@ -6,30 +6,32 @@
         xmlns:local="clr-namespace:WorldSkillsApp"
         mc:Ignorable="d"
         Loaded="Loading_Panel"
+        x:Name="userWindow"
+        Closed="userWindow_Closed"
         Title="Anonic Airlines Automation System" Height="550" Width="700">
     <Grid>
         <StackPanel>
             <Border BorderThickness="0 0 0 1" BorderBrush="Black">
                 <StackPanel Orientation="Horizontal">
                     <Button BorderThickness="0" FontSize="14" Background="White" 
-                            BorderBrush="White" Cursor="Hand" Height="27" Padding="10 5 10 5"  Content="Exit"/>
+                            BorderBrush="White" Cursor="Hand" Height="27" Padding="10 5 10 5"  Content="Exit" Click="Exit"/>
                 </StackPanel>
             </Border>
             <StackPanel Margin="0 30 0 0">
-                <TextBlock Margin="30 0 0 0">Hi Henri, Welcome to AMONIC Airlines.</TextBlock>
+                <TextBlock x:Name="welcomeText" Margin="30 0 0 0">Hi Henri, Welcome to AMONIC Airlines.</TextBlock>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="70 15 0 0">
-                    <TextBlock>Time spent on system: 00:19:03</TextBlock>
+                    <TextBlock x:Name="TimeSpant">Time spent on system: 00:19:03</TextBlock>
                     <TextBlock Margin="60 0 0 0">Number of crushes: 1</TextBlock>
                 </StackPanel>
             </StackPanel>
             <DataGrid x:Name="CrashesData" AutoGenerateColumns="False" HorizontalAlignment="Center" 
-                      Margin="0 70 0 0" HeadersVisibility="Column">
+                      Margin="0 70 0 0" HeadersVisibility="Column" ItemsSource="{Binding getCrashesData}" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Width="100"/>
-                    <DataGridTextColumn Header="Login Time" Width="100"/>
-                    <DataGridTextColumn Header="Logout Time" Width="110"/>
-                    <DataGridTextColumn Header="Time spent on system" Width="160"/>
-                    <DataGridTextColumn Header="Unsuccessful logout reason" Width="200"/>
+                    <DataGridTextColumn Header="Date" Width="100" Binding="{Binding Path=NowDate}"/>
+                    <DataGridTextColumn Header="Login Time" Width="100" Binding="{Binding Path=LoginTime}"/>
+                    <DataGridTextColumn Header="Logout Time" Width="110" Binding="{Binding Path=LogoutTime}"/>
+                    <DataGridTextColumn Header="Time spent on system" Width="160" Binding="{Binding Path=FullTime}"/>
+                    <DataGridTextColumn Header="Unsuccessful logout reason" Width="200" Binding="{Binding Path=Error}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>

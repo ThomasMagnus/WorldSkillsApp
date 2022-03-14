@@ -22,10 +22,31 @@ namespace WorldSkillsApp
     internal static class UserData
     {
         public static ObservableCollection<DataTable> dataTables = new ObservableCollection<DataTable>();
+        public static ObservableCollection<GetDataCrashes> CrashesData = new ObservableCollection<GetDataCrashes>();
 
         public static Dictionary<string, int> officesObj = new Dictionary<string, int> { };
         public static string email { get; set; }
         public static int roleId { get; set; }
     }
 
+    public class DataCrashes
+    {
+        public static object UserId { set; get; }
+        public static object UserEmail { set; get; }
+        public static object FirstName { set; get; }
+        public string NowDate { set; get; }
+        public string LoginTime { set; get; }
+        public string LogoutTime { set; get; }
+        public string FullTime { set; get; }
+        public string Error { set; get; }
+    }
+
+    public class GetDataCrashes
+    {
+        public string NowDate { set; get; }
+        public string LoginTime { set; get; }
+        public string LogoutTime { set; get; }
+        public string FullTime { set; get; }
+        public string Error { set; get; }
+    } 
 }
